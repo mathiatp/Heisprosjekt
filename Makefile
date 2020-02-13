@@ -1,4 +1,4 @@
-SOURCES := main.c heisstyring.c
+SOURCES := main.c heisstyring.c timer.c
 
 SOURCE_DIR := source
 BUILD_DIR := build
