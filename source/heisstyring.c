@@ -12,7 +12,7 @@ void stop_elevator_motor(){
 
 void emergency_stop(){
     hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-    if(!(hardware_read_stop_signal)){
+    if(!(hardware_read_stop_signal())){
         //change state
     }
 }
