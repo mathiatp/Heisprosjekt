@@ -10,6 +10,13 @@ void stop_elevator_motor(){
     hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 }
 
+void emergency_stop(){
+    hardware_command_movement(HARDWARE_MOVEMENT_STOP);
+    if(!(hardware_read_stop_signal)){
+        //change state
+    }
+}
+
 void stop_at_floor(int floor){
     if(hardware_read_floor_sensor(floor)){
         stop_elevator_motor();
