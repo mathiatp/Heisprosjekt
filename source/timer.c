@@ -9,15 +9,17 @@ clock_t start_time;
 
 void set_time_start(){
     start_time=clock();
-    printf("%ld",start_time/CLOCKS_PER_SEC);
+    
 }
 
 
 int door_timer(){
     int delay =3;
+
     clock_t now_time = clock();
-    printf("%ld",(now_time-start_time)/CLOCKS_PER_SEC);
-    if(((now_time-start_time)/CLOCKS_PER_SEC) > delay){
+    
+    if(((now_time-start_time)/CLOCKS_PER_SEC) >= delay){
+        return 1;
     }
     return 0;
 }

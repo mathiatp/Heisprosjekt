@@ -22,16 +22,23 @@ void init_queue();
 /**
  * @brief Checks if theres an order to any of the floors in a given @p direction 
  * @param direction Direction of the elevator
- * @return floor. 
- * @warning @p floor is 1 indexed.
+ * @return floor or -1 on empty queue.
+ * @warning @p floor is 0 indexed.
  */
 int check_queue(int direction);
 
+
+void delete_orders_from_floor(int floor);
+
 /**
- * @brief Updates the queue with a new order
+ * @brief Adds a new order to the queue
  */
 
-void update_queue(struct memory_state*  elevator_state);
+void add_to_queue(struct memory_state*  elevator_state);
+
+int orders_above_floor(struct memory_state*  elevator_state );
+
+int orders_below_floor(struct memory_state*  elevator_state );
 
 /**
  * @brief Checks if queue is empty

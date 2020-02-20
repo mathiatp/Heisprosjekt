@@ -1,5 +1,6 @@
 #include "queue.h"
 #include "heisstyring.h"
+#include "stdlib.h"
 //#include "elevator_state.h"
 
 
@@ -19,16 +20,27 @@ void init_queue(){
 int check_queue(int direction){
     for (int floor = 0;  floor<NUM_OF_FLOORS; floor++){
         if(queue[direction][floor]==1){
-            return floor+1;
+            return floor;
         }
     }
-    return 0;
+    for (int floor = 0;  floor<NUM_OF_FLOORS; floor++){
+        if(queue[abs(direction-1)][floor]==1){
+            return floor;
+        }
+    }
+
+    return -1;
 
     
 }
 
+void delete_orders_from_floor(int floor){
+    queue[0][floor]=0;
+    queue[1][floor]=0;
+}
 
-void update_queue(struct memory_state*  elevator_state ){
+
+void add_to_queue(struct memory_state*  elevator_state ){
 for(int floor = 0;floor < NUM_OF_FLOORS;floor++){
     if(hardware_read_order(floor, HARDWARE_ORDER_INSIDE)){
         if(elevator_state->last_floor < floor+1){
@@ -36,19 +48,44 @@ for(int floor = 0;floor < NUM_OF_FLOORS;floor++){
         }
         else if(elevator_state->last_floor > floor+1){
             queue[0][floor] = 1;
-        } //Hva skjer hvis det er ordre fra innsiden på denne etg.?
+        } 
+        else{
+            //elevator_state->state = DOOR_OPEN;
+            //hva skal vi gjøre her
+        }
         
     }
-
-    //if(hardware_read_order(floor, HARDWARE_ORDER_UP)){
-        
-    ;
+    else if(hardware_read_order(floor, HARDWARE_ORDER_UP)){
+        queue[1][floor] = 1;
+    
+    }
+     else if(hardware_read_order(floor, HARDWARE_ORDER_DOWN)){
+        queue[0][floor] = 1;
+    
+    }
 }
 }
 
+int orders_above_floor(struct memory_state*  elevator_state ){
+    for(int floor = elevator_state->last_floor; floor < NUM_OF_FLOORS-1; floor++ ){
+        if(queue[1][floor]==1){
+            return 1;
+        }
+    }
+    return 0;  
+}
+
+int orders_below_floor(struct memory_state*  elevator_state ){
+    for(int floor = elevator_state->last_floor; floor > NUM_OF_FLOORS-4; floor-- ){
+        if(queue[1][floor]==1){
+            return 1;
+        }
+    }
+    return 0;  
+}
 
 int queue_is_empty(){
-    if(!(check_queue(0)) && !(check_queue(1))){ 
+    if((0 > (check_queue(0))) && (0 > (check_queue(1)))){ 
         return 1;
     }
     return 0;
