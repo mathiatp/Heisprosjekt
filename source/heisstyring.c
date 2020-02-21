@@ -31,11 +31,11 @@ void set_elevator_state_last_floor(struct memory_state*  elevator_state ){
 }*/
 
 
-void emergency_stop(){
-    hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-    if(!(hardware_read_stop_signal())){
-        //change state
+void check_emergency_stop(struct memory_state*  elevator_state){
+    if(hardware_read_stop_signal()){
+        elevator_state->state = EMERGENCY_STOP;
     }
+    
 }
 
 int stop_at_floor(int floor){
@@ -48,14 +48,16 @@ int stop_at_floor(int floor){
 
 int movement_door(){
     hardware_command_door_open(1);
-    if(door_timer()){
+    
+    if((hardware_read_obstruction_signal())){
+        set_time_start(); //Finnes det noen bedre løsning?
+        return 0;
+        
+    }
+    else if(door_timer()){
         hardware_command_door_open(0);
         return 1;
 
     }
-    //if(!(hardware_read_obstruction_signal())){
-      //   hardware_command_door_open(0);
-    //}
-    
     return 0;
 }

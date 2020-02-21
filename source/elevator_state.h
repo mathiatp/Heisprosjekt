@@ -23,6 +23,7 @@ struct memory_state{
     State state;
     int last_floor;
     int last_direction; //0 is down, 1 is up
+    int is_door_open; //0 = no, 1 = yes
 };
 
 //struct memory_state elevator_state = {IDLE, 1, 1};

@@ -43,15 +43,24 @@ void delete_orders_from_floor(int floor){
 void add_to_queue(struct memory_state*  elevator_state ){
 for(int floor = 0;floor < NUM_OF_FLOORS;floor++){
     if(hardware_read_order(floor, HARDWARE_ORDER_INSIDE)){
-        if(elevator_state->last_floor < floor+1){
+        if(elevator_state->last_floor < floor){
             queue[1][floor] = 1;
         }
-        else if(elevator_state->last_floor > floor+1){
+        else if(elevator_state->last_floor > floor){
             queue[0][floor] = 1;
         } 
+        else if((elevator_state->last_floor == floor) && (elevator_state->state == IDLE)){
+            queue[0][floor] = 1;
+            queue[1][floor] = 1;
+        }
         else{
-            //elevator_state->state = DOOR_OPEN;
-            //hva skal vi gjøre her
+            if(elevator_state->state == UP){
+                queue[0][floor] = 1;
+            }
+            else if(elevator_state->state ==DOWN){
+                queue[1][floor] = 1;
+            }
+            
         }
         
     }

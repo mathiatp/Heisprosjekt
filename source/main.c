@@ -41,7 +41,7 @@ static void sigint_handler(int sig){
 
 
 
-struct memory_state elevator_state = {IDLE, 0, 1};
+struct memory_state elevator_state = {IDLE, 0, 1, 0};
 
 int main(){
     
@@ -55,13 +55,14 @@ int main(){
     printf("=== Example Program ===\n");
     printf("Press the stop button on the elevator panel to exit\n");
     
+   
     
     signal(SIGINT, sigint_handler);
     while(1){
 
         add_to_queue(&elevator_state);
         set_elevator_state_last_floor(&elevator_state);
-        
+        check_emergency_stop(&elevator_state);
 
         
         switch(elevator_state.state){
@@ -77,21 +78,44 @@ int main(){
                     elevator_state.state = DOWN;
                     break;              
                 }
-                else{
+                else if(hardware_read_floor_sensor(elevator_state.last_floor)){
                     elevator_state.state = DOOR_OPEN;
                     set_time_start();
                 }
+                else{
+                    if(elevator_state.last_direction == 0){
+                        elevator_state.state=DOWN;
+                        break;
+                    }
+                    elevator_state.state=UP;
+                    break;
+                }
                 break;
             case EMERGENCY_STOP:
+                hardware_command_movement(HARDWARE_MOVEMENT_STOP);
+                init_queue();
+                while(hardware_read_stop_signal()){
+                    //Leser ikke
+                }
+                if(elevator_state.is_door_open){
+                    elevator_state.state = DOOR_OPEN;
+                    set_time_start();
+                }
+                else{
+                    elevator_state.state= IDLE;}
                 break;
             case DOOR_OPEN:
-                delete_orders_from_floor(elevator_state.last_floor);
+                /*if(!(hardware_read_floor_sensor(elevator_state.last_floor))){
+                    elevator_state.state = IDLE;
+                    break;
+                }*/
+                elevator_state.is_door_open = 1;
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
                 if(movement_door()){
                     elevator_state.state = IDLE;
-                    
-                }
-                              
+                    elevator_state.is_door_open = 0;
+                    delete_orders_from_floor(elevator_state.last_floor);
+                }            
                 break;
             case UP:
                 hardware_command_movement(HARDWARE_MOVEMENT_UP);
