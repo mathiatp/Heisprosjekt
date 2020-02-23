@@ -8,8 +8,18 @@
 #include "elevator_state.h"
 
 void set_elevator_state_last_floor(struct memory_state*  elevator_state );
+
+/**
+ * @brief   Clears all orderlights. 
+ * Downloaded form updated driver.
+ */
+void clear_all_order_lights();
+void clear_order_lights_at_floor(int floor);
+void init_elevator(struct memory_state*  elevator_state);
 //void set_elevator_state_last_direction(struct memory_state*  elevator_state );
 void check_emergency_stop(struct memory_state*  elevator_state);
 int stop_at_floor(int floor);
 int movement_door();
+void out_of_bounds_safety(struct memory_state*  elevator_state);
+
 #endif

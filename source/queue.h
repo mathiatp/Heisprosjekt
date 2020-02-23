@@ -6,6 +6,10 @@
 #include "elevator_state.h"
 #define NUM_OF_FLOORS 4
 #define NUM_OF_DIRECTIONS 2
+#define DIR_UP 1
+#define DIR_DOWN 0
+
+int queue[NUM_OF_DIRECTIONS][NUM_OF_FLOORS];
 
 /**
  * @file
@@ -17,7 +21,7 @@
  * @brief Initializes the queuesystem. 
  * @return Nothing.
  */
-void init_queue();
+void clear_queue();
 
 /**
  * @brief Checks if theres an order to any of the floors in a given @p direction 
@@ -34,7 +38,7 @@ void delete_orders_from_floor(int floor);
  * @brief Adds a new order to the queue
  */
 
-void add_to_queue(struct memory_state*  elevator_state);
+void handle_orders(struct memory_state*  elevator_state);
 
 int orders_above_floor(struct memory_state*  elevator_state );
 

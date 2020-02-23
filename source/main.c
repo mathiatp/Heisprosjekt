@@ -4,28 +4,10 @@
 #include <stdlib.h>
 #include "hardware.h"
 #include "heisstyring.h"
-
 #include "queue.h"
 #include "timer.h"
 
-/**
- * @brief   Clears all orderlights. 
- * Downloaded form updated driver.
- */
-/*static void clear_all_order_lights(){
-    HardwareOrder order_types[3] = {
-        HARDWARE_ORDER_UP,
-        HARDWARE_ORDER_INSIDE,
-        HARDWARE_ORDER_DOWN
-    };
 
-    for(int f = 0; f < HARDWARE_NUMBER_OF_FLOORS; f++){
-        for(int i = 0; i < 3; i++){
-            HardwareOrder type = order_types[i];
-            hardware_command_order_light(f, type, 0);
-        }
-    }
-}*/
 
 /**
  * @brief   Stops motort when ^C is pressed.
@@ -50,18 +32,19 @@ int main(){
         fprintf(stderr, "Unable to initialize hardware\n");
         exit(1);
     }
-    init_queue();
+    init_elevator(&elevator_state);
 
-    printf("=== Example Program ===\n");
-    printf("Press the stop button on the elevator panel to exit\n");
+    printf("=== Elevator Program ===\n");
+    printf("Press CTRL+C to stop program\n");
     
-   
     
-    signal(SIGINT, sigint_handler);
+    
     while(1){
-
-        add_to_queue(&elevator_state);
+        signal(SIGINT, sigint_handler);
         set_elevator_state_last_floor(&elevator_state);
+        handle_orders(&elevator_state);
+        
+        
         check_emergency_stop(&elevator_state);
 
         
@@ -82,18 +65,22 @@ int main(){
                     elevator_state.state = DOOR_OPEN;
                     set_time_start();
                 }
-                else{
-                    if(elevator_state.last_direction == 0){
-                        elevator_state.state=DOWN;
-                        break;
+                else if(elevator_state.last_floor == check_queue(elevator_state.last_direction)){
+                    if(elevator_state.last_direction == 1){
+                        elevator_state.state = DOWN;
                     }
-                    elevator_state.state=UP;
-                    break;
+                    else{
+                        elevator_state.state = UP;
+                    }
+                }
+                else{
+                    printf("HER SKAL VI IKKE VÆRE");
                 }
                 break;
             case EMERGENCY_STOP:
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-                init_queue();
+                clear_queue();
+                clear_all_order_lights();
                 while(hardware_read_stop_signal()){
                     //Leser ikke
                 }
@@ -105,12 +92,10 @@ int main(){
                     elevator_state.state= IDLE;}
                 break;
             case DOOR_OPEN:
-                /*if(!(hardware_read_floor_sensor(elevator_state.last_floor))){
-                    elevator_state.state = IDLE;
-                    break;
-                }*/
-                elevator_state.is_door_open = 1;
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
+                elevator_state.is_door_open = 1;
+                clear_order_lights_at_floor(elevator_state.last_floor);
+                
                 if(movement_door()){
                     elevator_state.state = IDLE;
                     elevator_state.is_door_open = 0;
@@ -118,21 +103,26 @@ int main(){
                 }            
                 break;
             case UP:
-                hardware_command_movement(HARDWARE_MOVEMENT_UP);
-                elevator_state.last_direction = 1;
-                 if (stop_at_floor(check_queue(1))){
-                    elevator_state.state = DOOR_OPEN;
-                    set_time_start();         
-                }       
+    
+                    hardware_command_movement(HARDWARE_MOVEMENT_UP);
+                    elevator_state.last_direction = DIR_UP;
+                
+                    if (stop_at_floor(check_queue(DIR_UP))){
+                        elevator_state.state = DOOR_OPEN;
+                        set_time_start();         
+                    }       
+                
                 break;
             case DOWN:
+             
                 hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
-                elevator_state.last_direction = 0;
-                
-                if (stop_at_floor(check_queue(0))){
+                elevator_state.last_direction = DIR_DOWN;
+                                
+                if (stop_at_floor(check_queue(DIR_DOWN))){
                     elevator_state.state = DOOR_OPEN;
                     set_time_start();         
-                }       
+                }    
+               
                 break;
             default:
                 if(queue_is_empty()){
