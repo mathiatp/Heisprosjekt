@@ -18,8 +18,7 @@ int queue[NUM_OF_DIRECTIONS][NUM_OF_FLOORS];
  */
 
 /**
- * @brief Initializes the queuesystem. 
- * @return Nothing.
+ * @brief Clears all orders in @p queue by setting all values to 0.
  */
 void clear_queue();
 
@@ -27,23 +26,28 @@ void clear_queue();
  * @brief Checks if theres an order to any of the floors in a given @p direction 
  * @param direction Direction of the elevator
  * @return floor or -1 on empty queue.
- * @warning @p floor is 0 indexed.
  */
 int check_queue(int direction);
 
-
+/**
+ * @brief Clears all orders in @p queue at @p floor.
+ * @param floor Which floor to delete orders from.
+ */
 void delete_orders_from_floor(int floor);
 
 /**
  * @brief Adds a new order to the queue
+ * @param elevator_state A pointer to elevator_state.
  */
 
 void handle_orders(struct memory_state*  elevator_state);
 
+//BRUKES IKKE
 int orders_above_floor(struct memory_state*  elevator_state );
-
+//BRUKES IKKE
 int orders_below_floor(struct memory_state*  elevator_state );
 
+//BRUEKS DEN?
 /**
  * @brief Checks if queue is empty
  * @return 1 if empty
