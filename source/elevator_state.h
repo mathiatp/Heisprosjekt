@@ -16,8 +16,9 @@ typedef enum {
 
 /**
  * @brief   Struct for memorizing the state of the elevator
- * @param last_floor Is one indexed
+ * @param last_floor Is zero indexed
  * @param last_direction Is zero when going down, and one when going up.
+ * @param is_door_open Is zero when door is closed, andone when door is open.
  */
 struct memory_state{
     State state;
