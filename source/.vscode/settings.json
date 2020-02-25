@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "heisstyring.h": "c"
+        "heisstyring.h": "c",
+        "timer.h": "c"
     }
 }

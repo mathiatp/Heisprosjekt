@@ -4,12 +4,12 @@
 
 #include "hardware.h"
 #include "elevator_state.h"
-#define NUM_OF_FLOORS 4
+
 #define NUM_OF_DIRECTIONS 2
 #define DIR_UP 1
 #define DIR_DOWN 0
 
-int queue[NUM_OF_DIRECTIONS][NUM_OF_FLOORS];
+int queue[NUM_OF_DIRECTIONS][HARDWARE_NUMBER_OF_FLOORS];
 
 /**
  * @file
@@ -20,32 +20,27 @@ int queue[NUM_OF_DIRECTIONS][NUM_OF_FLOORS];
 /**
  * @brief Clears all orders in @p queue by setting all values to 0.
  */
-void clear_queue();
+void queue_clear();
 
 /**
- * @brief Checks if theres an order to any of the floors in a given @p direction 
+ * @brief Checks if theres an order to any of the @p floors in a given @p direction 
  * @param direction Direction of the elevator
- * @return floor or -1 on empty queue.
+ * @return @p floor or -1 on empty queue.
  */
-int check_queue(int direction);
+int queue_check(int direction);
 
 /**
  * @brief Clears all orders in @p queue at @p floor.
  * @param floor Which floor to delete orders from.
  */
-void delete_orders_from_floor(int floor);
+void queue_delete_orders_from_floor(int floor);
 
 /**
  * @brief Adds a new order to the queue
- * @param elevator_state A pointer to elevator_state.
+ * @param p_elevator_state A pointer to @p elevator_state.
  */
 
-void handle_orders(struct memory_state*  elevator_state);
-
-//BRUKES IKKE
-int orders_above_floor(struct memory_state*  elevator_state );
-//BRUKES IKKE
-int orders_below_floor(struct memory_state*  elevator_state );
+void queue_handle_orders(memory_state* elevator_state);
 
 //BRUEKS DEN?
 /**

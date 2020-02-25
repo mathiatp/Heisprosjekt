@@ -9,7 +9,6 @@ clock_t start_time;
 
 void set_time_start(){
     start_time=clock();
-    
 }
 
 

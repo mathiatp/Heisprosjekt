@@ -1,14 +1,14 @@
 #include "queue.h"
-#include "heisstyring.h"
+#include "elevator_control.h"
 #include "stdlib.h"
 //#include "elevator_state.h"
 
 
 
 void clear_queue(){
-    for (int dir=0; dir< NUM_OF_DIRECTIONS; dir++){
-        for (int floor = 0;  floor<NUM_OF_FLOORS; floor++){
-            queue[dir][floor]=0;
+    for (int dir=0; dir < NUM_OF_DIRECTIONS; dir++){
+        for (int floor = 0;  floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
+            queue[dir][floor] = 0;
         }
 
     }
@@ -24,9 +24,9 @@ void clear_queue(){
     //3. Hvis vi beveger oss opp: iterere fra den etasjen vi er i og oppover. Først i oppkø, så i nedkø
     //3a. Hvis det da ikke er noe under iterer vi gjennom hele løkken (i riktig rekkefølge)
 
-int check_queue(struct memory_state*  elevator_state){
+int queue_check(memory_state* elevator_state){
 
-    if (elevator_state->in_floor ==1){
+    if (elevator_state->in_floor == 1){
         if(queue[0][elevator_state->last_floor] == 1){
             return elevator_state->last_floor;
         }
@@ -45,7 +45,7 @@ int check_queue(struct memory_state*  elevator_state){
                 }
             }
 
-            for (int floor =0 ;  floor < NUM_OF_FLOORS; floor++){
+            for (int floor = 0 ;  floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
                 if(queue[1][floor] == 1){
                     return floor;
                 }
@@ -53,13 +53,13 @@ int check_queue(struct memory_state*  elevator_state){
         }
 
         else if(elevator_state->last_direction == 1){
-            for (int floor =elevator_state->last_floor+1 ;  floor < NUM_OF_FLOORS; floor++){
+            for (int floor =elevator_state->last_floor+1 ;  floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
                 if(queue[1][floor] == 1){
                     return floor;
                 }
             }
 
-            for (int floor = NUM_OF_FLOORS-1;  floor >= 0; floor--){
+            for (int floor = HARDWARE_NUMBER_OF_FLOORS-1;  floor >= 0; floor--){
                 if(queue[0][floor] == 1){
                     return floor;
                 }
@@ -69,16 +69,16 @@ int check_queue(struct memory_state*  elevator_state){
         }
     }
 
-    for (int floor = 0;  floor < NUM_OF_FLOORS; floor++){
+    for (int floor = 0;  floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
 
-        if(queue[elevator_state->last_direction][floor]==1){
+        if(queue[elevator_state->last_direction][floor] == 1){
             return floor;
         }
     }
 
 
-    for (int floor = 0;  floor < NUM_OF_FLOORS; floor++){
-        if(queue[abs(elevator_state->last_direction-1)][floor]==1){
+    for (int floor = 0;  floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
+        if(queue[abs(elevator_state->last_direction-1)][floor] == 1){
             return floor;
         }
     }
@@ -88,7 +88,7 @@ int check_queue(struct memory_state*  elevator_state){
     
 }
 
-void delete_orders_from_floor(int floor){
+void queue_delete_orders_from_floor(int floor){
     queue[0][floor] = 0;
     queue[1][floor] = 0;
 
@@ -97,8 +97,8 @@ void delete_orders_from_floor(int floor){
 }
 
 
-void handle_orders(struct memory_state*  elevator_state ){
-    for(int floor = 0;floor < NUM_OF_FLOORS;floor++){
+void queue_handle_orders(memory_state* elevator_state ){
+    for(int floor = 0; floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
         if(hardware_read_order(floor, HARDWARE_ORDER_INSIDE)){
             hardware_command_order_light(floor,HARDWARE_ORDER_INSIDE,1);
 
@@ -110,13 +110,12 @@ void handle_orders(struct memory_state*  elevator_state ){
             } 
             else if((elevator_state->last_floor == floor) && (elevator_state->state == IDLE)){
                 queue[0][floor] = 1;
-                //queue[1][floor] = 1;
             }
             else{ //Hvis du er mellom to etasjer. Brukes ved emergency stop
                 if(elevator_state->state == UP){
                     queue[0][floor] = 1;
                 }
-                else if(elevator_state->state ==DOWN){
+                else if(elevator_state->state == DOWN){
                     queue[1][floor] = 1;
                 }
                 
@@ -125,20 +124,20 @@ void handle_orders(struct memory_state*  elevator_state ){
         }
     else if(hardware_read_order(floor, HARDWARE_ORDER_UP)){
         queue[1][floor] = 1;
-        hardware_command_order_light(floor,HARDWARE_ORDER_UP,1);
+        hardware_command_order_light(floor, HARDWARE_ORDER_UP, 1);
         
     
     }
      else if(hardware_read_order(floor, HARDWARE_ORDER_DOWN)){
         queue[0][floor] = 1;
-        hardware_command_order_light(floor,HARDWARE_ORDER_DOWN,1);
+        hardware_command_order_light(floor, HARDWARE_ORDER_DOWN, 1);
     
     }
     }
 }
 
 int queue_is_empty(){
-    if((0 > (check_queue(0))) && (0 > (check_queue(1)))){ 
+    if((0 > (queue_check(0))) && (0 > (queue_check(1)))){ 
         return 1;
     }
     return 0;
