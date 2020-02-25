@@ -5,7 +5,7 @@
 
 
 
-void clear_queue(){
+void queue_clear(){
     for (int dir=0; dir < NUM_OF_DIRECTIONS; dir++){
         for (int floor = 0;  floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
             queue[dir][floor] = 0;
@@ -137,7 +137,7 @@ void queue_handle_orders(memory_state* elevator_state ){
 }
 
 int queue_is_empty(memory_state *elevator_state){
-    if(queue_check(&elevator_state) == -1){ 
+    if(queue_check(elevator_state) == -1){ 
         return 1;
     }
     return 0;

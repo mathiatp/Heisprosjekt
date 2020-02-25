@@ -20,7 +20,7 @@ int queue[NUM_OF_DIRECTIONS][HARDWARE_NUMBER_OF_FLOORS];
 /**
  * @brief Clears all orders in @p queue by setting all values to 0.
  */
-void queue_clear();
+void clear_queue();
 
 /**
  * @brief Checks if theres an order to any of the @p floors in a given @p direction 

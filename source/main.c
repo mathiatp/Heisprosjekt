@@ -60,7 +60,7 @@ int main(){
                     elevator_state.state = DOWN;
                     break;              
                 }
-                else if(hardware_read_floor_sensor(&elevator_state.last_floor)){
+                else if(hardware_read_floor_sensor(elevator_state.last_floor)){
                     elevator_state.state = DOOR_OPEN;
                     set_time_start();
                 }
@@ -131,7 +131,7 @@ int main(){
                
                 break;
             default:
-                if(queue_is_empty()){
+                if(queue_is_empty(&elevator_state)){
                     hardware_command_movement(HARDWARE_MOVEMENT_STOP);
                 }
                 break;

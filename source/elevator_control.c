@@ -44,7 +44,7 @@ void elevator_control_clear_order_lights_at_floor(int floor){
 
 void elevator_control_init_elevator(memory_state* p_elevator_state){
        elevator_control_clear_all_order_lights();
-       clear_queue();
+       queue_clear();
        while(!(hardware_read_floor_sensor(0))){
             hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
         }
