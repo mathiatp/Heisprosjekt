@@ -20,14 +20,14 @@ int queue[NUM_OF_DIRECTIONS][HARDWARE_NUMBER_OF_FLOORS];
 /**
  * @brief Clears all orders in @p queue by setting all values to 0.
  */
-void clear_queue();
+void queue_clear();
 
 /**
  * @brief Checks if theres an order to any of the @p floors in a given @p direction 
  * @param direction Direction of the elevator
  * @return @p floor or -1 on empty queue.
  */
-int queue_check(memory_state* elevator_state);
+int queue_check(Elevator_state* elevator);
 
 /**
  * @brief Clears all orders in @p queue at @p floor.
@@ -37,15 +37,14 @@ void queue_delete_orders_from_floor(int floor);
 
 /**
  * @brief Adds a new order to the queue
- * @param p_elevator_state A pointer to @p elevator_state.
+ * @param p_elevator A pointer to @p elevator.
  */
 
-void queue_handle_orders(memory_state* elevator_state);
+void queue_handle_orders(Elevator_state* elevator);
 
-//BRUEKS DEN?
 /**
  * @brief Checks if queue is empty
  * @return 1 if empty
  */
-int queue_is_empty(memory_state* elevator_state);
+int queue_is_empty(Elevator_state* elevator);
 #endif

@@ -2,21 +2,21 @@
 #include "queue.h"
 #include "stdio.h"
 
-//elevator_control_
+//elevator_control
 
-void elevator_control_set_elevator_state_last_floor(memory_state* p_elevator_state ){
+void elevator_control_set_elevator_floor(Elevator_state* p_elevator ){
     for (int floor = 0; floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
         if(hardware_read_floor_sensor(floor)){
-            p_elevator_state->last_floor = floor;
-            p_elevator_state->in_floor = 1;
+            p_elevator->last_floor = floor;
+            p_elevator->in_floor = 1;
             break;
         }
         else{
-            p_elevator_state->in_floor = 0;
+            p_elevator->in_floor = 0;
         }
     }
 
-    hardware_command_floor_indicator_on(p_elevator_state->last_floor);
+    hardware_command_floor_indicator_on(p_elevator->last_floor);
 }
 
 
@@ -42,7 +42,7 @@ void elevator_control_clear_order_lights_at_floor(int floor){
     hardware_command_order_light(floor,HARDWARE_ORDER_INSIDE,0);
 }
 
-void elevator_control_init_elevator(memory_state* p_elevator_state){
+void elevator_control_init_elevator(Elevator_state* p_elevator){
        elevator_control_clear_all_order_lights();
        queue_clear();
        while(!(hardware_read_floor_sensor(0))){
@@ -51,9 +51,9 @@ void elevator_control_init_elevator(memory_state* p_elevator_state){
         hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 }
 
-void elevator_control_check_emergency_stop(memory_state* p_elevator_state){
+void elevator_control_check_emergency_stop(Elevator_state* p_elevator){
     if(hardware_read_stop_signal()){
-        p_elevator_state->state = EMERGENCY_STOP;
+        p_elevator->state = EMERGENCY_STOP;
     }
     
 }

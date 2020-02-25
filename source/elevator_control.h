@@ -1,4 +1,3 @@
-#pragma once
 
 #ifndef ELEVATOR_CONTROL_H
 #define ELEVATOR_CONTROL_H
@@ -8,10 +7,10 @@
 #include "elevator_state.h"
 
 /**
- * @brief Sets the variable @p last_floor in the pointer @p p_elevator_state based on @p hardware_read_floor_sensor()
- * @param p_elevator_state A pointer to @p elevator_state
+ * @brief Sets the variable @p last_floor in the pointer @p p_elevator based on @p hardware_read_floor_sensor()
+ * @param p_elevator A pointer to @p elevator
  */
-void elevator_control_set_elevator_state_last_floor(memory_state* p_elevator_state );
+void elevator_control_set_elevator_floor(Elevator_state* p_elevator );
 
 /**
  * @brief   Clears all orderlights. 
@@ -31,14 +30,14 @@ void elevator_control_clear_order_lights_at_floor(int floor);
  */
 
 //TRENGS PARAM?!
-void elevator_control_init_elevator(memory_state* p_elevator_state);
+void elevator_control_init_elevator(Elevator_state* p_elevator);
 
 
 /**
- * @brief Checks if the emergency stop button is pressed. If so sets the @p state of @p p_elevator_state to @p EMERGENCY_STOP.
- * @param p_elevator_state A pointer to @p elevator_state.
+ * @brief Checks if the emergency stop button is pressed. If so sets the @p state of @p p_elevator to @p EMERGENCY_STOP.
+ * @param p_elevator A pointer to @p elevator.
  */
-void elevator_control_check_emergency_stop(memory_state* p_elevator_state);
+void elevator_control_check_emergency_stop(Elevator_state* p_elevator);
 
 //SKAL DET VÆRE MED @HARDWARE OSV?
 /**

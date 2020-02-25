@@ -23,7 +23,7 @@ static void sigint_handler(int sig){
 
 
 
-memory_state elevator_state = {IDLE, 0, 1, 0, 1};
+Elevator_state elevator = {IDLE, 0, 1, 0, 1};
 
 int main(){
     
@@ -33,7 +33,7 @@ int main(){
         exit(1);
     }
 
-    elevator_control_init_elevator(&elevator_state);
+    elevator_control_init_elevator(&elevator);
 
     printf("=== Elevator Program ===\n");
     printf("Press CTRL+C to stop program\n");
@@ -42,34 +42,34 @@ int main(){
     
     while(1){
         signal(SIGINT, sigint_handler);
-        elevator_control_set_elevator_state_last_floor(&elevator_state);
-        queue_handle_orders(&elevator_state);
-        elevator_control_check_emergency_stop(&elevator_state);
+        elevator_control_set_elevator_last_floor(&elevator);
+        queue_handle_orders(&elevator);
+        elevator_control_check_emergency_stop(&elevator);
 
         
-        switch(elevator_state.state){
+        switch(elevator.state){
             case IDLE:
-                if(queue_is_empty(&elevator_state)){
-                    elevator_state.state = IDLE;
+                if(queue_is_empty(&elevator)){
+                    elevator.state = IDLE;
                 }
-                else if(elevator_state.last_floor < queue_check(&elevator_state)){
-                    elevator_state.state = UP;
+                else if(elevator.last_floor < queue_check(&elevator)){
+                    elevator.state = UP;
                     break;
                 }
-                else if(elevator_state.last_floor > queue_check(&elevator_state)){
-                    elevator_state.state = DOWN;
+                else if(elevator.last_floor > queue_check(&elevator)){
+                    elevator.state = DOWN;
                     break;              
                 }
-                else if(hardware_read_floor_sensor(elevator_state.last_floor)){
-                    elevator_state.state = DOOR_OPEN;
+                else if(hardware_read_floor_sensor(elevator.last_floor)){
+                    elevator.state = DOOR_OPEN;
                     set_time_start();
                 }
-                else if(elevator_state.last_floor == queue_check(&elevator_state)){
-                    if(elevator_state.last_direction == 1){
-                        elevator_state.state = DOWN;
+                else if(elevator.last_floor == queue_check(&elevator)){
+                    if(elevator.last_direction == 1){
+                        elevator.state = DOWN;
                     }
                     else{
-                        elevator_state.state = UP;
+                        elevator.state = UP;
                     }
                 }
                 else{
@@ -85,35 +85,35 @@ int main(){
                     //Leser ikke ordre
                 }
 
-                if(elevator_state.is_door_open){
-                    elevator_state.state = DOOR_OPEN;
+                if(elevator.is_door_open){
+                    elevator.state = DOOR_OPEN;
                     set_time_start();
                 }
                 else{
-                    elevator_state.state = IDLE;
+                    elevator.state = IDLE;
                     }
                 break;
                 
             case DOOR_OPEN:
                 
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-                elevator_state.is_door_open = 1;
-                elevator_control_clear_order_lights_at_floor(elevator_state.last_floor);
+                elevator.is_door_open = 1;
+                elevator_control_clear_order_lights_at_floor(elevator.last_floor);
                 
                 if(elevator_control_movement_door()){
-                    elevator_state.state = IDLE;
-                    elevator_state.is_door_open = 0;
-                    queue_delete_orders_from_floor(elevator_state.last_floor);
+                    elevator.state = IDLE;
+                    elevator.is_door_open = 0;
+                    queue_delete_orders_from_floor(elevator.last_floor);
                 }            
                 break;
             case UP:
     
                     hardware_command_movement(HARDWARE_MOVEMENT_UP);
-                    elevator_state.last_direction = DIR_UP;
+                    elevator.last_direction = DIR_UP;
                     
                 
-                    if (elevator_control_stop_at_floor(queue_check(&elevator_state))){
-                        elevator_state.state = DOOR_OPEN;
+                    if (elevator_control_stop_at_floor(queue_check(&elevator))){
+                        elevator.state = DOOR_OPEN;
                         set_time_start();         
                     }       
                 
@@ -121,17 +121,17 @@ int main(){
             case DOWN:
              
                 hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
-                elevator_state.last_direction = DIR_DOWN;
+                elevator.last_direction = DIR_DOWN;
                 
                                 
-                if (elevator_control_stop_at_floor(queue_check(&elevator_state))){
-                    elevator_state.state = DOOR_OPEN;
+                if (elevator_control_stop_at_floor(queue_check(&elevator))){
+                    elevator.state = DOOR_OPEN;
                     set_time_start();         
                 }    
                
                 break;
             default:
-                if(queue_is_empty(&elevator_state)){
+                if(queue_is_empty(&elevator)){
                     hardware_command_movement(HARDWARE_MOVEMENT_STOP);
                 }
                 break;
