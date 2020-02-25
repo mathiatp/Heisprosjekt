@@ -23,7 +23,7 @@ static void sigint_handler(int sig){
 
 
 
-struct memory_state elevator_state = {IDLE, 0, 1, 0};
+struct memory_state elevator_state = {IDLE, 0, 1, 0, 1};
 
 int main(){
     
@@ -81,17 +81,22 @@ int main(){
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
                 clear_queue();
                 clear_all_order_lights();
+
                 while(hardware_read_stop_signal()){
                     //Leser ikke
                 }
+
                 if(elevator_state.is_door_open){
                     elevator_state.state = DOOR_OPEN;
                     set_time_start();
                 }
                 else{
-                    elevator_state.state= IDLE;}
+                    elevator_state.state= IDLE;
+                    }
                 break;
+                
             case DOOR_OPEN:
+                
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
                 elevator_state.is_door_open = 1;
                 clear_order_lights_at_floor(elevator_state.last_floor);
@@ -106,6 +111,7 @@ int main(){
     
                     hardware_command_movement(HARDWARE_MOVEMENT_UP);
                     elevator_state.last_direction = DIR_UP;
+                    
                 
                     if (stop_at_floor(check_queue(DIR_UP))){
                         elevator_state.state = DOOR_OPEN;
@@ -117,6 +123,7 @@ int main(){
              
                 hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
                 elevator_state.last_direction = DIR_DOWN;
+                
                                 
                 if (stop_at_floor(check_queue(DIR_DOWN))){
                     elevator_state.state = DOOR_OPEN;

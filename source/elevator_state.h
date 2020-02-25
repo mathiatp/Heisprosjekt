@@ -25,6 +25,7 @@ struct memory_state{
     int last_floor;
     int last_direction; //0 is down, 1 is up
     int is_door_open; //0 = no, 1 = yes
+    int in_floor; // 1 when in last_floor
 };
 
 //struct memory_state elevator_state = {IDLE, 1, 1};

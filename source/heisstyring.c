@@ -8,6 +8,11 @@ void set_elevator_state_last_floor(struct memory_state*  elevator_state ){
     for (int floor = 0; floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
         if(hardware_read_floor_sensor(floor)){
             elevator_state->last_floor = floor;
+            elevator_state->in_floor = 1;
+            break;
+        }
+        else{
+            elevator_state->in_floor = 0;
         }
     }
 
