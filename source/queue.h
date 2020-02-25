@@ -27,7 +27,7 @@ void queue_clear();
  * @param direction Direction of the elevator
  * @return @p floor or -1 on empty queue.
  */
-int queue_check(int direction);
+int queue_check(memory_state* elevator_state);
 
 /**
  * @brief Clears all orders in @p queue at @p floor.
@@ -47,5 +47,5 @@ void queue_handle_orders(memory_state* elevator_state);
  * @brief Checks if queue is empty
  * @return 1 if empty
  */
-int queue_is_empty();
+int queue_is_empty(memory_state* elevator_state);
 #endif

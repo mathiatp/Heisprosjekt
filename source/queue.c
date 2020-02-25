@@ -136,8 +136,8 @@ void queue_handle_orders(memory_state* elevator_state ){
     }
 }
 
-int queue_is_empty(){
-    if((0 > (queue_check(0))) && (0 > (queue_check(1)))){ 
+int queue_is_empty(memory_state *elevator_state){
+    if(queue_check(&elevator_state) == -1){ 
         return 1;
     }
     return 0;

@@ -49,22 +49,22 @@ int main(){
         
         switch(elevator_state.state){
             case IDLE:
-                if(queue_is_empty()){
+                if(queue_is_empty(&elevator_state)){
                     elevator_state.state = IDLE;
                 }
-                else if(elevator_state.last_floor < queue_check(elevator_state.last_direction)){
+                else if(elevator_state.last_floor < queue_check(&elevator_state)){
                     elevator_state.state = UP;
                     break;
                 }
-                else if(elevator_state.last_floor > queue_check(elevator_state.last_direction)){
+                else if(elevator_state.last_floor > queue_check(&elevator_state)){
                     elevator_state.state = DOWN;
                     break;              
                 }
-                else if(hardware_read_floor_sensor(elevator_state.last_floor)){
+                else if(hardware_read_floor_sensor(&elevator_state.last_floor)){
                     elevator_state.state = DOOR_OPEN;
                     set_time_start();
                 }
-                else if(elevator_state.last_floor == queue_check(elevator_state.last_direction)){
+                else if(elevator_state.last_floor == queue_check(&elevator_state)){
                     if(elevator_state.last_direction == 1){
                         elevator_state.state = DOWN;
                     }
@@ -78,7 +78,7 @@ int main(){
                 break;
             case EMERGENCY_STOP:
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-                clear_queue();
+                queue_clear();
                 elevator_control_clear_all_order_lights();
 
                 while(hardware_read_stop_signal()){
@@ -112,7 +112,7 @@ int main(){
                     elevator_state.last_direction = DIR_UP;
                     
                 
-                    if (elevator_control_stop_at_floor(queue_check(DIR_UP))){
+                    if (elevator_control_stop_at_floor(queue_check(&elevator_state))){
                         elevator_state.state = DOOR_OPEN;
                         set_time_start();         
                     }       
@@ -124,7 +124,7 @@ int main(){
                 elevator_state.last_direction = DIR_DOWN;
                 
                                 
-                if (elevator_control_stop_at_floor(queue_check(DIR_DOWN))){
+                if (elevator_control_stop_at_floor(queue_check(&elevator_state))){
                     elevator_state.state = DOOR_OPEN;
                     set_time_start();         
                 }    
