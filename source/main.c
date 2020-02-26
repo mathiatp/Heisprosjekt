@@ -42,7 +42,7 @@ int main(){
     
     while(1){
         signal(SIGINT, sigint_handler);
-        elevator_control_set_elevator_last_floor(&elevator);
+        elevator_control_set_elevator_floor(&elevator);
         queue_handle_orders(&elevator);
         elevator_control_check_emergency_stop(&elevator);
 

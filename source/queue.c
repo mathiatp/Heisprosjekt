@@ -37,7 +37,7 @@ int queue_check(Elevator_state* elevator){
     }
 
 
-    if(elevator->in_floor == 0){
+    if((elevator->in_floor == 0) && (elevator->state == IDLE)){
         if(elevator->last_direction == 0){
             for (int floor = elevator->last_floor-1;  floor >= 0; floor--){
                 if(queue[0][floor] == 1){
