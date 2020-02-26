@@ -1,4 +1,6 @@
-#pragma once
+#ifndef TIMER_H
+#define TIMER_H
+
 
 #include <time.h>
 
@@ -20,4 +22,4 @@ void set_time_start();
  */
 int door_timer();
 
-
+#endif

@@ -5,7 +5,9 @@
 #include "hardware.h"
 #include "timer.h"
 #include "elevator_state.h"
+#include "queue.h"
 
+void elevator_control_set_above_floor(Elevator_state* p_elevator );
 /**
  * @brief Sets the variable @p last_floor in the pointer @p p_elevator based on @p hardware_read_floor_sensor()
  * @param p_elevator A pointer to @p elevator
@@ -45,6 +47,8 @@ void elevator_control_check_emergency_stop(Elevator_state* p_elevator);
  * @param floor The floor the elevator will stop at.
  */
 int elevator_control_stop_at_floor(int floor);
+
+//MÅ OPPDATERES
 
 /**
  * @brief Opens the door, before it closes the door after a timer of three seconds end. If obstruction is activated the door will stay open

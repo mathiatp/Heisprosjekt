@@ -2,11 +2,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "hardware.h"
 #include "elevator_control.h"
-#include "queue.h"
-#include "timer.h"
-
 
 
 /**
@@ -23,7 +19,7 @@ static void sigint_handler(int sig){
 
 
 
-Elevator_state elevator = {IDLE, 0, 1, 0, 1};
+Elevator_state elevator = {IDLE, 0, 1, 0, 1, 0};
 
 int main(){
     
@@ -43,6 +39,7 @@ int main(){
     while(1){
         signal(SIGINT, sigint_handler);
         elevator_control_set_elevator_floor(&elevator);
+        elevator_control_set_above_floor(&elevator);
         queue_handle_orders(&elevator);
         elevator_control_check_emergency_stop(&elevator);
 
@@ -65,10 +62,10 @@ int main(){
                     set_time_start();
                 }
                 else if(elevator.last_floor == queue_check(&elevator)){
-                    if(elevator.last_direction == 1){
+                    if(elevator.above_floor == 1){
                         elevator.state = DOWN;
                     }
-                    else{
+                    else if(elevator.above_floor == 0){
                         elevator.state = UP;
                     }
                 }
@@ -78,14 +75,18 @@ int main(){
                 break;
             case EMERGENCY_STOP:
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-                queue_clear();
                 elevator_control_clear_all_order_lights();
 
+
                 while(hardware_read_stop_signal()){
-                    //Leser ikke ordre
+                    queue_clear();
+                    if(elevator.in_floor){
+                        elevator_control_movement_door();
+                    }
                 }
 
-                if(elevator.is_door_open){
+                hardware_command_stop_light(0);
+                if(elevator.in_floor){
                     elevator.state = DOOR_OPEN;
                     set_time_start();
                 }
@@ -107,7 +108,6 @@ int main(){
                 }            
                 break;
             case UP:
-    
                     hardware_command_movement(HARDWARE_MOVEMENT_UP);
                     elevator.last_direction = DIR_UP;
                     
@@ -119,7 +119,6 @@ int main(){
                 
                 break;
             case DOWN:
-             
                 hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
                 elevator.last_direction = DIR_DOWN;
                 
@@ -131,9 +130,8 @@ int main(){
                
                 break;
             default:
-                if(queue_is_empty(&elevator)){
-                    hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-                }
+                hardware_command_movement(HARDWARE_MOVEMENT_STOP);
+                elevator.state = IDLE;
                 break;
 
         }

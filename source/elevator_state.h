@@ -26,6 +26,7 @@ typedef struct {
     int last_direction; //0 is down, 1 is up
     int is_door_open; //0 = no, 1 = yes
     int in_floor; // 1 when in last_floor
+    int above_floor;
 }Elevator_state;
 
 #endif

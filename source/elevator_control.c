@@ -1,8 +1,24 @@
 #include "elevator_control.h"
-#include "queue.h"
-#include "stdio.h"
 
-//elevator_control
+
+
+void elevator_control_set_above_floor(Elevator_state* p_elevator ){
+    if(hardware_read_floor_sensor(HARDWARE_NUMBER_OF_FLOORS-1)){
+        p_elevator->above_floor = 0;
+    }
+    
+    else if(hardware_read_floor_sensor(0)) {
+        p_elevator->above_floor=1;
+    }
+    else if((hardware_read_floor_sensor(p_elevator->last_floor)) && (p_elevator->last_direction == DIR_UP)){
+        p_elevator->above_floor = 1;
+    }
+    else if((hardware_read_floor_sensor(p_elevator->last_floor)) && (p_elevator->last_direction == DIR_DOWN)){
+        p_elevator->above_floor = 0;
+    }
+    
+}
+
 
 void elevator_control_set_elevator_floor(Elevator_state* p_elevator ){
     for (int floor = 0; floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
@@ -54,6 +70,7 @@ void elevator_control_init_elevator(Elevator_state* p_elevator){
 void elevator_control_check_emergency_stop(Elevator_state* p_elevator){
     if(hardware_read_stop_signal()){
         p_elevator->state = EMERGENCY_STOP;
+        hardware_command_stop_light(1);
     }
     
 }
@@ -69,6 +86,9 @@ int elevator_control_stop_at_floor(int floor){
 int elevator_control_movement_door(){
     
     hardware_command_door_open(1);
+    if(hardware_read_stop_signal()){
+        return 0;
+    }
 
     
     if((hardware_read_obstruction_signal())){
@@ -79,8 +99,8 @@ int elevator_control_movement_door(){
     else if(door_timer()){
         hardware_command_door_open(0);
         return 1;
-
     }
+    
     return 0;
 }
 
