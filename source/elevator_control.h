@@ -6,7 +6,10 @@
 #include "timer.h"
 #include "elevator_state.h"
 #include "queue.h"
-
+/**
+ * @brief 
+ * @param p_elevator A pointer to @p elevator
+ */
 void elevator_control_set_above_floor(Elevator_state* p_elevator );
 /**
  * @brief Sets the variable @p last_floor in the pointer @p p_elevator based on @p hardware_read_floor_sensor()
