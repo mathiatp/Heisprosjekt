@@ -1,14 +1,16 @@
+/**
+ * @file
+ * @brief Timer for opening the elevator door.
+ *
+ */
+
 #ifndef TIMER_H
 #define TIMER_H
 
 
 #include <time.h>
 
-/**
- * @file
- * @brief Timer for opening the elevator door.
- *
- */
+
 
 /**
  * @brief Sets the time of when the timer starts

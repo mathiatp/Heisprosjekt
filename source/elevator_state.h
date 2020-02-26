@@ -1,4 +1,8 @@
-
+/**
+ * @file
+ * @brief Struct used to set the state of the elevator.
+ * The state is further used to control the elevator.
+ */
 
 #ifndef ELEVATOR_STATE_H
 #define ELEVATOR_STATE_H
@@ -15,10 +19,13 @@ typedef enum {
 } State;
 
 /**
- * @brief   Struct for memorizing the state of the elevator
+ * @brief   Struct for memorizing the state of the elevator,
  * @param last_floor Is zero indexed
  * @param last_direction Is zero when going down, and one when going up.
- * @param is_door_open Is zero when door is closed, andone when door is open.
+ * @param is_door_open Is zero when door is closed, and one when door is open.
+ * @param in_floor Is one when in floor.
+ * @param above_floor Is one when above floor, zero when under. 
+ * @warning @p above_floor can be 1 while in_floor is one. Then the elevator is in a floor, not inbetween.
  */
 typedef struct {
     State state;
