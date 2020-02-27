@@ -16,7 +16,7 @@ typedef enum {
     DOOR_OPEN,
     UP,
     DOWN
-} FSM_STATE;
+}FSM_STATE;
 
 /**
  * @brief   Struct for memorizing the state of the elevator,

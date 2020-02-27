@@ -23,6 +23,12 @@ int queue[NUM_OF_DIRECTIONS][HARDWARE_NUMBER_OF_FLOORS];
  */
 void queue_clear();
 
+/**
+ * @brief Checks if queue is empty
+ * @param p_elevator A pointer to an @p Elevator_state.
+ * @return 1 if empty
+ */
+int queue_is_empty(Elevator_state* elevator);
 
 /**
  * @brief Checks if there is an order to any of the @p floors in a given @p direction
@@ -45,10 +51,5 @@ void queue_delete_orders_from_floor(int floor);
  */
 void queue_handle_orders(Elevator_state* elevator);
 
-/**
- * @brief Checks if queue is empty
- * @param p_elevator A pointer to an @p Elevator_state.
- * @return 1 if empty
- */
-int queue_is_empty(Elevator_state* elevator);
+
 #endif
