@@ -41,7 +41,7 @@ int main(){
         elevator_control_set_elevator_floor(&elevator);
         elevator_control_set_above_floor(&elevator);
         elevator_control_set_floor_lights(&elevator);
-        queue_handle_orders(&elevator);
+        queue_add_order_and_set_order_light(&elevator);
         elevator_control_check_emergency_stop(&elevator);
 
         

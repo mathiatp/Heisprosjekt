@@ -49,7 +49,7 @@ void queue_delete_orders_from_floor(int floor);
  * @brief Adds a new order to the queue
  * @param p_elevator A pointer to an @p Elevator_state.
  */
-void queue_handle_orders(Elevator_state* elevator);
+void queue_add_order_and_set_order_light(Elevator_state* elevator);
 
 
 #endif
