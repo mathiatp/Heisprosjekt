@@ -13,15 +13,14 @@
 
 
 /**
- * @brief Sets the time of when the timer starts
- * @return Nothing.
+ * @brief Sets the time of when the timer starts.
  */
-void set_time_start();
+void timer_set_start_time();
 
 /**
  * @brief Counts down 3 sec from start time 
- * @return 1 when 3 sec has passed.
+ * @return 1 when 3 sec has passed, or 0 otherwise.
  */
-int door_timer();
+int timer_door_countdown();
 
 #endif

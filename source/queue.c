@@ -26,7 +26,7 @@ void queue_clear(){
 
 int queue_check(Elevator_state* elevator){
     /*
-    if (elevator->in_floor == 1){
+    if (elevator->on_floor == 1){
         if(queue[0][elevator->last_floor] == 1){
             return elevator->last_floor;
         }
@@ -37,7 +37,7 @@ int queue_check(Elevator_state* elevator){
     }*/
 
 
-    if((elevator->in_floor == 0) && (elevator->state == IDLE)){
+    if((elevator->on_floor == 0) && (elevator->state == IDLE)){
         if(elevator->last_direction == 0){
             for (int floor = elevator->last_floor-1;  floor >= 0; floor--){
                 if(queue[0][floor] == 1){
@@ -68,12 +68,12 @@ int queue_check(Elevator_state* elevator){
             
         }
     }
-    //La til for å se om det ville funke. Jeg tror at den gjør alle ordre når du er in_floor.
+    //La til for å se om det ville funke. Jeg tror at den gjør alle ordre når du er on_floor.
     //Hvis vi ser på Om det er en annen metode å løse casen der vi er i etasjen og skal åpne døren hvis du er i etasjen først
     //slik at den ikke trenger ligge her. Fordi den er den eneste som blir sendt ut.
     
     if(elevator->last_direction == DIR_UP){
-        for(int floor = 0;  floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
+        for(int floor = elevator->last_floor;  floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
             if(queue[DIR_UP][floor] == 1){
                 return floor;
             }
@@ -85,10 +85,12 @@ int queue_check(Elevator_state* elevator){
                 return floor;
             }
         }
+
+
     }
 
     else if(elevator->last_direction == DIR_DOWN){
-        for (int floor = HARDWARE_NUMBER_OF_FLOORS - 1;  floor >= 0; floor--){
+        for (int floor = elevator->last_floor - 1;  floor >= 0; floor--){
             if(queue[DIR_DOWN][floor] == 1){
                 return floor;
             }
@@ -101,7 +103,7 @@ int queue_check(Elevator_state* elevator){
             }
         }
     }
-    /*
+    
     for (int floor = 0;  floor < HARDWARE_NUMBER_OF_FLOORS; floor++){
 
         if(queue[elevator->last_direction][floor] == 1){
@@ -115,7 +117,7 @@ int queue_check(Elevator_state* elevator){
             return floor;
         }
     }
-    */
+    
     return -1;
 
     
