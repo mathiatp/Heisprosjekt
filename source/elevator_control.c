@@ -1,6 +1,12 @@
 #include "elevator_control.h"
 
 
+void sigint_handler(int sig){
+    (void)(sig);
+    printf("Terminating elevator\n");
+    hardware_command_movement(HARDWARE_MOVEMENT_STOP);
+    exit(0);
+}
 
 void elevator_control_set_above_floor(Elevator_state* p_elevator ){
 
@@ -58,19 +64,28 @@ void elevator_control_clear_order_lights_at_floor(int floor){
 }
 
 void elevator_control_init_elevator(Elevator_state* p_elevator){
-       elevator_control_clear_all_order_lights();
-       queue_clear();
+    //Handout code---------------------------------------------
+    signal(SIGINT, sigint_handler);
+    int error = hardware_init();
 
-       while(!(hardware_read_floor_sensor(0))){
-            hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
-        }
-        hardware_command_movement(HARDWARE_MOVEMENT_STOP);
+    if(error != 0){
+        fprintf(stderr, "Unable to initialize hardware\n");
+        exit(1);
+    }
+    //---------------------------------------------------------
+    
+    elevator_control_clear_all_order_lights();
+    queue_clear();
+
+    while(!(hardware_read_floor_sensor(0))){
+        hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
+    }
+    hardware_command_movement(HARDWARE_MOVEMENT_STOP);
 }
 
 void elevator_control_check_emergency_stop(Elevator_state* p_elevator){
     if(hardware_read_stop_signal()){
         p_elevator->state = EMERGENCY_STOP;
-        hardware_command_stop_light(1);
     }
     
 }
@@ -83,7 +98,7 @@ int elevator_control_stop_at_floor(int floor){
     return 0;
 }
 
-int elevator_control_movement_door(){
+int elevator_control_movement_door(Elevator_state* p_elevator){
     hardware_command_door_open(1);
     
     if(hardware_read_stop_signal()){
@@ -92,7 +107,6 @@ int elevator_control_movement_door(){
     else if((hardware_read_obstruction_signal())){
         timer_set_start_time();
         return 0;
-        
     }
     else if(timer_door_countdown()){
         hardware_command_door_open(0);

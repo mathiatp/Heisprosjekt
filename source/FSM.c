@@ -1,93 +1,62 @@
-
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "elevator_control.h"
-
-
-/**
- * @brief   Stops motort when ^C is pressed.
- * Downloaded form updated driver.
- */
-static void sigint_handler(int sig){
-    (void)(sig);
-    printf("Terminating elevator\n");
-    hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-    exit(0);
-}
-
-
-
 
 Elevator_state elevator = {IDLE, 0, 1, 0, 1, 0};
 
 int main(){
-    
-    int error = hardware_init();
-    if(error != 0){
-        fprintf(stderr, "Unable to initialize hardware\n");
-        exit(1);
-    }
-
-    elevator_control_init_elevator(&elevator);
 
     printf("=== Elevator Program ===\n");
     printf("Press CTRL+C to stop program\n");
     
-    
+    elevator_control_init_elevator(&elevator);
     
     while(1){
+        //Continious check-functions------------------------------------
         signal(SIGINT, sigint_handler);
-        elevator_control_set_elevator_floor(&elevator);
+        elevator_control_check_emergency_stop(&elevator);
         elevator_control_set_above_floor(&elevator);
+        elevator_control_set_elevator_floor(&elevator);
         elevator_control_set_floor_lights(&elevator);
         queue_add_order_and_set_order_light(&elevator);
-        elevator_control_check_emergency_stop(&elevator);
+        //--------------------------------------------------------------     
 
-        
         switch(elevator.state){
             case IDLE:
                 if(queue_is_empty(&elevator)){
-                    elevator.state = IDLE;
-                    //break;
+                    elevator.state = IDLE;                    
                 }
                 else if(elevator.last_floor < queue_check(&elevator)){
                     elevator.state = UP;
-                    break;
                 }
                 else if(elevator.last_floor > queue_check(&elevator)){
-                    elevator.state = DOWN;
-                    break;              
-                }
-                else if(hardware_read_floor_sensor(elevator.last_floor)){
-                    elevator.state = DOOR_OPEN;
-                    timer_set_start_time();
+                    elevator.state = DOWN;           
                 }
                 else if(elevator.last_floor == queue_check(&elevator)){
-                    if(elevator.above_floor == 1){
+                    if(elevator.on_floor){
+                        elevator.state = DOOR_OPEN;
+                        timer_set_start_time();
+                    }
+                    else if(elevator.above_floor == 1){
                         elevator.state = DOWN;
                     }
                     else if(elevator.above_floor == 0){
                         elevator.state = UP;
                     }
                 }
-                else{
-                    printf("HER SKAL VI IKKE VÆRE");
-                }
                 break;
+                
             case EMERGENCY_STOP:
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
                 elevator_control_clear_all_order_lights();
-
+                hardware_command_stop_light(1);
 
                 while(hardware_read_stop_signal()){
                     queue_clear();
                     if(elevator.on_floor){
-                        elevator_control_movement_door();
+                        elevator_control_movement_door(&elevator);
                     }
                 }
-
                 hardware_command_stop_light(0);
+
                 if(elevator.on_floor){
                     elevator.state = DOOR_OPEN;
                     timer_set_start_time();
@@ -98,39 +67,43 @@ int main(){
                 break;
                 
             case DOOR_OPEN:
-                
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
-                elevator.is_door_open = 1;
+                elevator.is_door_open = 1;       
+
+                if(queue_check(&elevator) == elevator.last_floor){  //If an order is placed on the same floor to hold the door open
+                    timer_set_start_time();
+                }
+
+                queue_delete_orders_from_floor(elevator.last_floor);
                 elevator_control_clear_order_lights_at_floor(elevator.last_floor);
+
                 
-                if(elevator_control_movement_door()){
-                    elevator.state = IDLE;
+                if(elevator_control_movement_door(&elevator)){
                     elevator.is_door_open = 0;
-                    queue_delete_orders_from_floor(elevator.last_floor);
+                    elevator.state = IDLE;
                 }            
                 break;
+
             case UP:
                     hardware_command_movement(HARDWARE_MOVEMENT_UP);
                     elevator.last_direction = DIR_UP;
                     
-                
                     if (elevator_control_stop_at_floor(queue_check(&elevator))){
                         elevator.state = DOOR_OPEN;
-                        timer_set_start_time();         
-                    }       
-                
+                        timer_set_start_time();        
+                    }
                 break;
+                
             case DOWN:
                 hardware_command_movement(HARDWARE_MOVEMENT_DOWN);
                 elevator.last_direction = DIR_DOWN;
-                
-                                
+                               
                 if (elevator_control_stop_at_floor(queue_check(&elevator))){
                     elevator.state = DOOR_OPEN;
-                    timer_set_start_time();         
+                    timer_set_start_time();                             
                 }    
-               
                 break;
+
             default:
                 hardware_command_movement(HARDWARE_MOVEMENT_STOP);
                 elevator.state = IDLE;
