@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief Controls the FSM of the elevator.
+ * Contains main()
+ * 
+ */
 #include "elevator_control.h"
 
 Elevator_state elevator = {IDLE, 0, 1, 0, 1, 0};
@@ -7,7 +13,7 @@ int main(){
     printf("=== Elevator Program ===\n");
     printf("Press CTRL+C to stop program\n");
     
-    elevator_control_init_elevator(&elevator);
+    elevator_control_init_elevator();
     
     while(1){
         //Continious check-functions------------------------------------
@@ -52,7 +58,7 @@ int main(){
                 while(hardware_read_stop_signal()){
                     queue_clear();
                     if(elevator.on_floor){
-                        elevator_control_movement_door(&elevator);
+                        elevator_control_movement_door();
                     }
                 }
                 hardware_command_stop_light(0);
@@ -78,7 +84,7 @@ int main(){
                 elevator_control_clear_order_lights_at_floor(elevator.last_floor);
 
                 
-                if(elevator_control_movement_door(&elevator)){
+                if(elevator_control_movement_door()){
                     elevator.is_door_open = 0;
                     elevator.state = IDLE;
                 }            

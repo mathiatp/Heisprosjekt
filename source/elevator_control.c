@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Implementation file of elevator_control.h
+ * 
+ */
 #include "elevator_control.h"
 
 
@@ -35,7 +40,7 @@ void elevator_control_clear_order_lights_at_floor(int floor){
     hardware_command_order_light(floor,HARDWARE_ORDER_INSIDE,0);
 }
 
-void elevator_control_init_elevator(Elevator_state* p_elevator){
+void elevator_control_init_elevator(){
     //Handout code---------------------------------------------
     signal(SIGINT, sigint_handler);
     int error = hardware_init();
@@ -70,7 +75,7 @@ int elevator_control_stop_at_floor(int floor){
     return 0;
 }
 
-int elevator_control_movement_door(Elevator_state* p_elevator){
+int elevator_control_movement_door(){
     hardware_command_door_open(1);
     
     if(hardware_read_stop_signal()){

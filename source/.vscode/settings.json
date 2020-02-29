@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "heisstyring.h": "c",
-        "timer.h": "c"
+        "timer.h": "c",
+        "elevator_control.h": "c"
     }
 }

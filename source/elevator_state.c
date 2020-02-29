@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief Implementation file of elevator_state.h
+ * 
+ */
+
 #include "elevator_state.h"
 #include "hardware.h"
 
