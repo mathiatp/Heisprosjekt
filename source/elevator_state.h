@@ -36,4 +36,18 @@ typedef struct {
     int above_floor;
 }Elevator_state;
 
+/**
+ * @brief Sets the variable @p above_floor in the pointer @p p_elevator
+ * @param p_elevator A pointer to an @p Elevator_state
+ */
+void elevator_state_set_above_floor(Elevator_state* p_elevator );
+
+
+/**
+ * @brief Sets the variables @p last_floor and @p on_floor in the pointer @p p_elevator
+ * @param p_elevator A pointer to @p Elevator_state
+ */
+void elevator_state_set_elevator_floor(Elevator_state* p_elevator );
+
+
 #endif

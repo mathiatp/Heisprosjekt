@@ -1,5 +1,4 @@
 #include "queue.h"
-#include "stdlib.h"
 
 
 void queue_clear(){
