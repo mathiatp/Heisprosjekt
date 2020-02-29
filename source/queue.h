@@ -6,8 +6,8 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include "elevator_state.h"
-#include "hardware.h"
+#include "elevator_control.h"
+
 
 #define NUM_OF_DIRECTIONS 2 
 #define DIR_UP 1
